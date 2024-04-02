@@ -47,6 +47,13 @@ public class PlayerController : NetworkBehaviour
         //the horizontal input on X and vertical input on Z.
         //We leave Y on 0 since we don't want the player to move up or down
         _movementInput = new Vector3(hInput, 0, vInput);
+
+        //Check for input, jump and tell server you jumped
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            Jump();
+            CmdJump();
+        }
     }
 
     private void FixedUpdate()
@@ -64,5 +71,17 @@ public class PlayerController : NetworkBehaviour
     {
         //Here we set the color of the material of the Sphere to the new color
         _renderer.material.color = newColor;
+    }
+
+    //Server side
+    [Command]
+    private void CmdJump()
+    {
+        Jump();
+    }
+    //Both client and serverside
+    private void Jump()
+    {
+        _rigidbody.AddForce(Vector3.up * _jumpForce, ForceMode.Impulse);
     }
 }
